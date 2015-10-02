@@ -1,0 +1,88 @@
+//
+// Takes waveforms from the "file".
+// Creates NSAMPLES starting with IDSTART time with the step of NFREQ ns
+// Applies noise (correlated) for each sample
+// Stores samples and true in-time amplitude
+// To run:
+// > root -l -q Example04.C+
+//
+
+
+TString CreateNSamples(TString waveforminput ="",double shift=0,int nSmpl=NSAMPLES,int nFreq=25)
+{
+  Pulse pSh;
+  TString fileinput = waveforminput;
+  
+  TString fileoutput = "data/NSamples.root"; 
+  
+  // Noise level (GeV)
+  double sigmaNoise = 0.044;
+  
+
+  // input Waveforms
+
+  TFile *file = new TFile(fileinput);
+  int    BX0;
+  int    nWF;
+  double waveform[WFLENGTH];
+  double energyPU[NBXTOTAL];
+  double signalTruth;
+  TTree *tree = (TTree*)file->Get("Waveforms");
+  tree->SetBranchAddress("nWF",          &nWF);
+  tree->SetBranchAddress("waveform",     waveform);
+  tree->SetBranchAddress("BX0",          &BX0);
+  tree->SetBranchAddress("signalTruth",  &signalTruth);
+  tree->SetBranchAddress("energyPU" ,    energyPU);
+
+  // output samples
+  
+  double samples[nSmpl];
+  double amplitudeTruth;
+  TFile *fileOut = new TFile(fileoutput.Data(),"recreate");
+  TTree *treeOut = new TTree("Samples", "");
+
+  treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
+  treeOut->Branch("nFreq",             &nFreq,               "nFreq/I");
+  treeOut->Branch("amplitudeTruth",    &amplitudeTruth,      "amplitudeTruth/D");
+  treeOut->Branch("samples",           samples,              "samples[nSmpl]/D");
+  
+  int nentries = tree->GetEntries();
+  for(int ievt=0; ievt<nentries; ievt++){
+
+    double samplesUncorrelated[nSmpl];
+    
+    for(int i=0; i<nSmpl; ++i){
+      samplesUncorrelated[i] = rnd.Gaus(0,1);
+    }
+    
+    // Noise correlations
+    for(int i=0; i<nSmpl; ++i){
+      samples[i]=0;
+      for(int j=0; j<nSmpl; ++j){
+	samples[i] += pSh.cholesky(i,j) * samplesUncorrelated[j];
+      }
+    }
+
+    for(int i=0; i<nSmpl; ++i){
+      samples[i]   *= sigmaNoise;
+    }
+ 
+    // add signal and pileup
+    tree->GetEntry(ievt);
+    for(int i=0; i<nSmpl; ++i){
+      int index = IDSTART-shift+ i * nFreq;
+      samples[i]   += waveform[index];
+    }    
+
+    // true amplitude = in-time pileup + signal
+    amplitudeTruth = signalTruth - energyPU[BX0];
+    //    cout<<"ampu"<<amplitudeTruth<<endl;
+    treeOut->Fill();
+  }
+  
+  treeOut->Write();
+  fileOut->Close();
+  file->Close();
+
+  return fileoutput;
+}
