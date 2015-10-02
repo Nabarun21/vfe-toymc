@@ -25,14 +25,15 @@
 #include <TRandom.h>
 #include <iostream>
 
-
-void Example02()
+void FillWaveform(TString InitialEventFile)
 {
+
+  TString fileInput="data/";
+  fileInput+=InitialEventFile;
 
   // make sure these inputs are what you really want
   
-  const TString fileInput       = "data/EmptyFileCRRC43.root";
-  const TString fileOutput      = "output.root";
+  const TString fileWaveforms      = "data/waveforms.root";
   const int     nPU             = 0;
   const int     nEventsTotal    = 100;
   const float   eta             = 0.0;
@@ -54,9 +55,9 @@ void Example02()
 
   Pulse pSh;
    
-  // Output file will be created
+  // Waveforms file will be created
 
-  TFile *fileOut = new TFile(fileOutput.Data(),"recreate");
+  TFile *fileOut = new TFile(fileWaveforms.Data(),"recreate");
   TTree *tree = new TTree("Waveforms", "");
 
   // Add branches
@@ -105,7 +106,7 @@ void Example02()
 
     // add pileup to the waveform
     // time window is nWF ns wide and is centered at BX0
-    
+      
     int ibxMax = min( BX0+11, nBX );
     for(int ibx = 0; ibx < ibxMax; ibx++){
       for(int iwf = 0; iwf < nWF; iwf++){

@@ -26,16 +26,21 @@ double funcPulseShape( double *x, double *par )
 
 
 
-void Example05()
+void FitPulseShape(TString Nsamples)
 {
   // Fit function
   
   TF1 *fPulseShape = new TF1("fPulseShape", funcPulseShape, -500, 500, 3);
   fPulseShape->SetNpx(1000);
 
+
+  TString fileinput="data/";
+  fileinput+=Nsamples;
+
+
   // Get one event with samples
 
-  TFile *file2 = new TFile("data/samples_signal_10GeV_pu_0.root");
+  TFile *file2 = new TFile(fileinput);
   //  TFile *file2 = new TFile("data/samples_signal_10GeV_eta_0.0_pu_140.root");
 
   double samples[NSAMPLES];

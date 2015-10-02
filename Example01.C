@@ -14,7 +14,7 @@
 #include <iostream>
 
 
-void Example01()
+void IniEventFile()
 {
   TFile *fin = new TFile("data/crrc43ns.root");
   TGraph *grPulseShape = (TGraph*)fin->Get("grCRRC43");

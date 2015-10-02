@@ -21,11 +21,13 @@
 
 
 
-void Example04()
+void CreateNSamples(TString waveforminput)
 {
   Pulse pSh;
+  TString fileinput = "data/";
+  fileinput +=waveforminput;
   
-  TString filenameOutput = "output.root"; 
+  TString filenameOutput = "data/NSamples.root"; 
   
   // Noise level (GeV)
   double sigmaNoise = 0.044;
@@ -33,7 +35,7 @@ void Example04()
 
   // input Waveforms
 
-  TFile *file = new TFile("data/waveform_signal_10GeV_pu_0.root");
+  TFile *file = new TFile(fileinput);
   int    BX0;
   int    nWF;
   double waveform[WFLENGTH];

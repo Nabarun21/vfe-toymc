@@ -1,5 +1,5 @@
-//#include <Eigen/Dense>
-#include </usr/include/eigen3/Eigen/Dense>
+#include "../eigen/Eigen/Dense"
+//#include </usr/include/eigen3/Eigen/Dense>
 
 typedef Eigen::Matrix<double,10,1> SampleVector;
 typedef Eigen::Matrix<double,19,1> FullSampleVector;

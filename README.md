@@ -19,18 +19,6 @@ corresponds to CRRC pulse shaper with tau=43ns. This file is a
 starting point. This example is for info only. It does not need to be
 repeated for CRRC 43ns shaper.
 
-Similar files for other configurations has been produced:
-data/EmptyFileCRRC10.root    CRRC tau=10 ns
-data/EmptyFileCRRC20.root    CRRC tau=20 ns
-data/EmptyFileCRRC30.root    CRRC tau=30 ns
-data/EmptyFileCRRC43.root    CRRC tau=43 ns
-data/EmptyFileCRRC60.root    CRRC tau=60 ns
-data/EmptyFileCRRC90.root    CRRC tau=90 ns
-data/EmptyFileQIE25.root    Charge integration with gate 25 ns
-data/EmptyFileQIE12.root    Charge integration with gate 12 ns
-data/EmptyFileQIE6.root     Charge integration with gate 6 ns
-
-
 
 Example02
 ---------
@@ -81,7 +69,7 @@ Example05
 Fit one event with a pulse shape and plot it
 Compare reconstructed amplitude with MC truth.
 Timing is also reconstructed.
-Errors on amplitude and timing are estimated using RMS of histograms
+Errors on amplitude and timing are estimated.
 
 
 Example06
@@ -93,11 +81,3 @@ To compile:
 > g++ -o Example06 Example06.cc PulseChiSqSNNLS.cc -std=c++11 `root-config --cflags --glibs`
 To run
 > ./Example06 
-
-
-Example07
----------
-
-Same exercise as in Example05 except errors on amplitude and timing are estimated using effective sigma: shortest interval that covers 68%. The advantages of this approach:
-- no need to use histograms
-- works for non-Gaussian distributions
