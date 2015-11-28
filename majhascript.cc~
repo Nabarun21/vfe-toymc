@@ -43,11 +43,11 @@ int main (int argc, char**argv)
   //  TString inieventfile=IniEventFile("crrc43ns.root");
   cout<<inieventfile<<endl;
 
-  double ampli_uncerts [30];
-  double tim_uncerts [30];
-  double ampli_uncerts_err [30];
-  double tim_uncerts_err [30];
-  double phase [30];
+  double ampli_uncerts [101];
+  double tim_uncerts [101];
+  double ampli_uncerts_err [101];
+  double tim_uncerts_err [101];
+  double phase [101];
   double *phase_err=0;
   int nsmpl=atoi(argv[3]);
   int nfreq=atoi(argv[4]);
@@ -56,31 +56,31 @@ int main (int argc, char**argv)
   TString waveforms =FillWaveform(inieventfile,nsmpl,nfreq);
   cout<<waveforms<<endl;
   
-  
+
 
   char canvasname1[120];
   sprintf(canvasname1,"fit_samples_4 events_event");
   TCanvas* canv1=new TCanvas(canvasname1,canvasname1,1000,1000);
-  // //  canv1->Divide (2,2);
+  canv1->Divide (2,2);
 
   int canvaspad=1;
-  int peakphase=atoi(argv[5]);
 
-  for (int phaseshift=0;phaseshift<=30;phaseshift++)
+
+  for (int phaseshift=0;phaseshift<=101;phaseshift++)
     {
       num_points+=1;
-      TString samples_file =CreateNSamples(waveforms,inieventfile,phaseshift,nsmpl,nfreq);
+      TString samples_file =CreateNSamples(waveforms,inieventfile,0.5*phaseshift,nsmpl,nfreq);
       double* unc;
-      //      cout<<endl;
-      //      cout<<"performing fit for phaseshift:"<<phaseshift<<endl;
-      // cout<<endl;
-      unc=extractsigma(samples_file,inieventfile,phaseshift,canv1,canvaspad,nsmpl,nfreq,peakphase);
+      cout<<endl;
+      cout<<"performing fit for phaseshift:"<<phaseshift<<endl;
+      cout<<endl;
+      unc=extractsigma2(samples_file,inieventfile,phaseshift,canv1,canvaspad,nsmpl,nfreq);
       //cout<<"guju"<<endl;
       ampli_uncerts[phaseshift]=unc[0];
       tim_uncerts[phaseshift]=unc[1];
       ampli_uncerts_err[phaseshift]=unc[2];
       tim_uncerts_err[phaseshift]=unc[3];
-      phase[phaseshift]=IDSTART-phaseshift;
+      phase[phaseshift]=IDSTART-0.5*phaseshift;
     }
   TGraphErrors* ampU_v_phase=new TGraphErrors(num_points,phase,ampli_uncerts,phase_err,ampli_uncerts_err);
   TGraphErrors* timU_v_phase=new TGraphErrors(num_points,phase,tim_uncerts,phase_err,tim_uncerts_err);
@@ -111,9 +111,7 @@ int main (int argc, char**argv)
 
   sprintf(savename,"all_plots/Uncertainity/%s%sns_Uncertainity_vs_Phase_shift_%i_samples_%i_frequency_efS.png",argv[1],argv[2],nsmpl,nfreq);
 	  
-  sprintf(savename1,"all_plots/Peak_positions/%s%sns_Peak_at_%ith_sample_%i_samples_%i_frequency_efS.png",argv[1],argv[2],(nsmpl/2+1),nsmpl,nfreq); 
-
-  //  sprintf(savename1,"all_plots/Fits/%s%sns_Fits_%i_samples_%i_frequency_efS.png",argv[1],argv[2],nsmpl,nfreq); 
+  sprintf(savename1,"all_plots/Fits/%s%sns_Fits_%i_samples_%i_frequency_efS.png",argv[1],argv[2],nsmpl,nfreq); 
 
 
   char canvtitle[120];
@@ -124,11 +122,11 @@ int main (int argc, char**argv)
   sprintf(canvtitle1,"all_plots/Fits/Fits"); 
   
 
-  //  canv->SaveAs(savename);
+  canv->SaveAs(savename);
   canv1->SaveAs(savename1);
   
 
-  // canv->SetTitle(canvtitle);
+  canv->SetTitle(canvtitle);
   canv1->SetTitle(canvtitle1);
   
 

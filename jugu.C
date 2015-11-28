@@ -4,7 +4,7 @@
 // > root -l Example07.C+
 //
 
-Pulse pSh("data/EmptyFileCRRC20.root",40,6);
+Pulse pSh("data/EmptyFileCRRC30.root",40,6);
 
 double uncertainities[4];
 
@@ -42,7 +42,7 @@ double funcPulseShape( double *x, double *par )
 
 
 
-double * extractsigma(TString samples_file,TString inieventfile,int iter,TCanvas* canv1,int& canvaspad,int nsmpl=NSAMPLES,int nfrq=NFREQ,int risestart=80) 
+double * extractsigma(TString samples_file,TString inieventfile,int iter,TCanvas* canv1,int& canvaspad,int nsmpl=NSAMPLES,int nfrq=NFREQ,int peakphase=150) 
 {
   // Fit function
 
@@ -64,7 +64,7 @@ double * extractsigma(TString samples_file,TString inieventfile,int iter,TCanvas
   tree->SetBranchAddress("amplitudeTruth",      &amplitudeTruth);
   tree->SetBranchAddress("samples",             samples);
 
-  double guja=risestart;
+  double guja=255-peakphase;
 
   //  cout<<"iter= "<<iter<<endl; 
   // if(IDSTART-iter==peakphase)

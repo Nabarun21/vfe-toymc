@@ -60,7 +60,7 @@ int main (int argc, char**argv)
   for (int phaseshift=0;phaseshift<=100;phaseshift++)
     {
       num_points+=1;
-      TString samples_file =CreateNSamples(waveforms,phaseshift,nsmpl,nfreq);
+      TString samples_file =CreateNSamples(waveforms,0.5*phaseshift,nsmpl,nfreq);
       double* unc;
       cout<<endl;
       cout<<"performing fit for phaseshift:"<<phaseshift<<endl;
@@ -70,7 +70,8 @@ int main (int argc, char**argv)
       tim_uncerts[phaseshift]=unc[1];
       ampli_uncerts_err[phaseshift]=unc[2];
       tim_uncerts_err[phaseshift]=unc[3];
-      phase[phaseshift]=IDSTART+50-phaseshift;
+      phase[phaseshift]=IDSTART-0.5*phaseshift;
+      delete samples_file;
     }
   TGraphErrors* ampU_v_phase=new TGraphErrors(num_points,phase,ampli_uncerts,phase_err,ampli_uncerts_err);
   TGraphErrors* timU_v_phase=new TGraphErrors(num_points,phase,tim_uncerts,phase_err,tim_uncerts_err);

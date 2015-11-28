@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for f in all_plots/*;
+  do
+     [ -d $f ] && cd "$f" && echo Entering into $f and grepping
+     rm *.pdf
+     cd ../..
+  done;

@@ -4,7 +4,7 @@
 // > root -l Example07.C+
 //
 
-Pulse pSh("data/EmptyFileCRRC20.root",40,6);
+Pulse pSh("data/EmptyFileCRRC20.root",10,25);
 
 double uncertainities[4];
 

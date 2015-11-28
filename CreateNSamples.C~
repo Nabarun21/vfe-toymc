@@ -8,16 +8,15 @@
 //
 
 
-TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double phase=0,int nSmpl=NSAMPLES,int nFreq=25)
+TString CreateNSamples(TString waveforminput ="",double shift=0,int nSmpl=NSAMPLES,int nFreq=25)
 {
-  Pulse pSh(inieventfile,nSmpl,nFreq);
-  
+  Pulse pSh;
   TString fileinput = waveforminput;
   
   TString fileoutput = "data/NSamples.root"; 
   
   // Noise level (GeV)
-  double sigmaNoise = 0;//set to 0 for pileup study, earlier 0.044;
+  double sigmaNoise = 0.044;
   
 
   // input Waveforms
@@ -71,13 +70,13 @@ TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double 
     // add signal and pileup
     tree->GetEntry(ievt);
     for(int i=0; i<nSmpl; ++i){
-      int index = phase+i*nFreq;//change for pile up study from: IDSTART-shift+ i * nFreq;
+      int index = IDSTART-shift+ i * nFreq;
       samples[i]   += waveform[index];
     }    
 
     // true amplitude = in-time pileup + signal
     amplitudeTruth = signalTruth - energyPU[BX0];
-    //    cout<<"ampu"<<amplitudeTruth<<endl;
+    cout<<"ampu"<<amplitudeTruth<<endl;
     treeOut->Fill();
   }
   

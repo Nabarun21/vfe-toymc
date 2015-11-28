@@ -17,7 +17,7 @@
 //
 
 
-TString FillWaveform(TString InitialEventFile,int nsmpl,int nfreq,int pu)
+TString FillWaveform(TString InitialEventFile="")
 {
 
   TString fileInput=InitialEventFile;
@@ -25,7 +25,7 @@ TString FillWaveform(TString InitialEventFile,int nsmpl,int nfreq,int pu)
   // make sure these inputs are what you really want
   
   const TString fileoutput      = "data/waveforms.root";
-  const int     nPU             = pu;//=0;
+  const int     nPU             = 0;
   const int     nEventsTotal    = 100;
   const float   eta             = 0.0;
   const float   signalAmplitude = 10.0;

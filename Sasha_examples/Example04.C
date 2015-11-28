@@ -8,16 +8,29 @@
 //
 
 
-TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double phase=0,int nSmpl=NSAMPLES,int nFreq=25)
+#include "Pulse.h"
+#include <TFile.h>
+#include <TTree.h>
+#include <TH1.h>
+#include <TProfile.h>
+#include <TF1.h>
+#include <TGraph.h>
+#include <TRandom.h>
+#include <TMath.h>
+#include <iostream>
+
+
+
+void CreateNSamples(TString waveforminput)
 {
-  Pulse pSh(inieventfile,nSmpl,nFreq);
+  Pulse pSh;
+  TString fileinput = "data/";
+  fileinput +=waveforminput;
   
-  TString fileinput = waveforminput;
-  
-  TString fileoutput = "data/NSamples.root"; 
+  TString filenameOutput = "data/NSamples.root"; 
   
   // Noise level (GeV)
-  double sigmaNoise = 0;//set to 0 for pileup study, earlier 0.044;
+  double sigmaNoise = 0.044;
   
 
   // input Waveforms
@@ -37,9 +50,11 @@ TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double 
 
   // output samples
   
-  double samples[nSmpl];
+  int nSmpl = NSAMPLES;
+  int nFreq = NFREQ;
+  double samples[NSAMPLES];
   double amplitudeTruth;
-  TFile *fileOut = new TFile(fileoutput.Data(),"recreate");
+  TFile *fileOut = new TFile(filenameOutput.Data(),"recreate");
   TTree *treeOut = new TTree("Samples", "");
 
   treeOut->Branch("nSmpl",             &nSmpl,               "nSmpl/I");
@@ -50,34 +65,35 @@ TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double 
   int nentries = tree->GetEntries();
   for(int ievt=0; ievt<nentries; ievt++){
 
-    double samplesUncorrelated[nSmpl];
+    double samplesUncorrelated[NSAMPLES];
     
-    for(int i=0; i<nSmpl; ++i){
+    for(int i=0; i<NSAMPLES; ++i){
       samplesUncorrelated[i] = rnd.Gaus(0,1);
     }
     
     // Noise correlations
-    for(int i=0; i<nSmpl; ++i){
+    for(int i=0; i<NSAMPLES; ++i){
       samples[i]=0;
-      for(int j=0; j<nSmpl; ++j){
+      for(int j=0; j<NSAMPLES; ++j){
 	samples[i] += pSh.cholesky(i,j) * samplesUncorrelated[j];
       }
     }
 
-    for(int i=0; i<nSmpl; ++i){
+    for(int i=0; i<NSAMPLES; ++i){
       samples[i]   *= sigmaNoise;
     }
  
     // add signal and pileup
+    
     tree->GetEntry(ievt);
-    for(int i=0; i<nSmpl; ++i){
-      int index = phase+i*nFreq;//change for pile up study from: IDSTART-shift+ i * nFreq;
+    for(int i=0; i<NSAMPLES; ++i){
+      int index = IDSTART + i * NFREQ;
       samples[i]   += waveform[index];
     }    
 
     // true amplitude = in-time pileup + signal
-    amplitudeTruth = signalTruth - energyPU[BX0];
-    //    cout<<"ampu"<<amplitudeTruth<<endl;
+    amplitudeTruth = signalTruth + energyPU[BX0];
+
     treeOut->Fill();
   }
   
@@ -85,5 +101,4 @@ TString CreateNSamples(TString waveforminput ="",TString inieventfile="",double 
   fileOut->Close();
   file->Close();
 
-  return fileoutput;
 }

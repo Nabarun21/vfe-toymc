@@ -16,16 +16,25 @@
 // 
 //
 
+#include "Pulse.h"
+#include <TFile.h>
+#include <TTree.h>
+#include <TH1.h>
+#include <TF1.h>
+#include <TGraph.h>
+#include <TRandom.h>
+#include <iostream>
 
-TString FillWaveform(TString InitialEventFile,int nsmpl,int nfreq,int pu)
+void FillWaveform(TString InitialEventFile)
 {
 
-  TString fileInput=InitialEventFile;
+  TString fileInput="data/";
+  fileInput+=InitialEventFile;
 
   // make sure these inputs are what you really want
   
-  const TString fileoutput      = "data/waveforms.root";
-  const int     nPU             = pu;//=0;
+  const TString fileWaveforms      = "data/waveforms.root";
+  const int     nPU             = 0;
   const int     nEventsTotal    = 100;
   const float   eta             = 0.0;
   const float   signalAmplitude = 10.0;
@@ -44,11 +53,11 @@ TString FillWaveform(TString InitialEventFile,int nsmpl,int nfreq,int pu)
   
   // Get the Pulse Shape
 
-  Pulse pSh(fileInput,nsmpl,nfreq);
+  Pulse pSh;
    
   // Waveforms file will be created
 
-  TFile *fileOut = new TFile(fileoutput.Data(),"recreate");
+  TFile *fileOut = new TFile(fileWaveforms.Data(),"recreate");
   TTree *tree = new TTree("Waveforms", "");
 
   // Add branches
@@ -122,7 +131,5 @@ TString FillWaveform(TString InitialEventFile,int nsmpl,int nfreq,int pu)
   tree->Write();
   fileOut->Close();
   file->Close();
-
-  return fileoutput;
 }
 
